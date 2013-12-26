@@ -23,6 +23,9 @@ def download_vid(vid):
     req = requests.head(flv_redirect, headers=headers)
     file_url = req.headers['location']
 
+    req = requests.head(flv_redirect, headers=headers)
+    file_url = req.headers['location']
+
     host = urlparse(file_url).netloc
     headers['Host'] = host
 
@@ -45,3 +48,4 @@ for index, vid in enumerate(vids):
     else:
         print "downloaded"
         app.set_vid_status(vid[0], main.STATUS["downloaded"])
+    break
