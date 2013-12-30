@@ -2,6 +2,7 @@ import requests
 import re
 import psycopg2
 import urllib
+import os
 
 STATUS = {
     'waiting': 0,
@@ -76,3 +77,23 @@ class App(object):
             return False
         flvurl = urllib.unquote(flvurl.group(1)).decode('utf8')
         return flvurl.replace("&amp;", "&")
+
+    def get_flv_files_list(self):
+        downloaded_files = []
+        for fn in os.listdir('flv'):
+            cur = self.conn.cursor()
+            filename = os.path.splitext(fn)[0]
+            cur.execute("SELECT * FROM series WHERE name=%s;", (filename,))
+            for serie in cur:
+                downloaded_files.append(serie)
+            cur.close()
+
+        print "reseting status"
+        cur = self.conn.cursor()
+        cur.execute("UPDATE series SET status=0;")
+        self.conn.commit()
+        cur.close()
+
+        for _file in downloaded_files:
+            print "set file as uploaded", _file[0]
+            self.set_vid_status(_file[0], 2)

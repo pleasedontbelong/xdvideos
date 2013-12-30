@@ -48,4 +48,3 @@ for index, vid in enumerate(vids):
     else:
         print "downloaded"
         app.set_vid_status(vid[0], main.STATUS["downloaded"])
-    break
